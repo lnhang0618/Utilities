@@ -5,6 +5,27 @@ import matplotlib.pyplot as plt
 import yaml
 import sys
 
+def show_yaml_example():
+    print("YAML配置文件示例:")
+    print("""
+transform:
+  U0: 5.4
+  nu: 1.5e-5
+
+files:
+  - path: "path/to/your/rawfile1.raw"
+    label: "Experiment"
+  - path: "path/to/your/rawfile2.raw"
+    label: "Result"
+
+plot:
+  title: "Plot Title"
+  xlabel: "X Axis Label"
+  ylabel: "Y Axis Label"
+  figsize: [12, 6]
+""")
+
+
 def read_config(config_file):
     with open(config_file, 'r') as file:
         config = yaml.safe_load(file)
@@ -28,6 +49,7 @@ def plot_data(data, plot_config, label):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python script.py <config.yml>")
+        show_yaml_example()
         sys.exit(1)
 
     config_file = sys.argv[1]
