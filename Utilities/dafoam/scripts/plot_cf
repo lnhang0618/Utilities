@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import yaml
+import sys
+
+def read_config(config_file):
+    with open(config_file, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
+
+def read_and_transform_data(file_path, transform_config):
+    # 读取RAW文件
+    data = pd.read_csv(file_path, delim_whitespace=True, header=None)
+
+    # 应用转换规则
+    U0 = transform_config['U0']
+    nu = transform_config['nu']
+    data['x'] = 5.4 * data.iloc[:, 0] / nu  # 根据规则计算横坐标
+    data['y'] = -2 * data.iloc[:, 3] / U0**2  # 根据规则计算纵坐标
+    return data
+
+def plot_data(data, plot_config, label):
+    # 绘图
+    plt.plot(data['x'], data['y'], label=label)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <config.yml>")
+        sys.exit(1)
+
+    config_file = sys.argv[1]
+    config = read_config(config_file)
+
+    plt.figure(figsize=config['plot'].get('figsize', (10, 6)))
+    for file_config in config['files']:
+        data = read_and_transform_data(file_config['path'], config['transform'])
+        plot_data(data, config['plot'], file_config.get('label', 'Data'))
+    plt.title(config['plot'].get('title', 'Data Plot'))
+    plt.xlabel(config['plot'].get('xlabel', ''))
+    plt.ylabel(config['plot'].get('ylabel', ''))
+    plt.legend()
+    plt.savefig("cf.png")
