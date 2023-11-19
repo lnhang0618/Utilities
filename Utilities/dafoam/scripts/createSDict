@@ -56,7 +56,7 @@ formatted_patches=$(echo $patch_list | sed 's/,/ /g')
     echo ""
     echo "interpolationScheme cellPoint;"
     echo ""
-    echo "surfaceFormat csv;"
+    echo "surfaceFormat raw;"
     echo ""
     echo "surfaces"
     echo "("
