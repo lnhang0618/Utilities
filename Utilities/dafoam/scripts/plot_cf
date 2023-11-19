@@ -31,9 +31,9 @@ def read_config(config_file):
         config = yaml.safe_load(file)
     return config
 
-def read_and_transform_data(file_path, transform_config):
+def read_and_transform_data(file_path, transform_config,skiprows):
     # 读取RAW文件
-    data = pd.read_csv(file_path, delim_whitespace=True, error_bad_lines=False,header=None)
+    data = pd.read_csv(file_path, delim_whitespace=True, skiprows=skiprows,header=None)
 
     # 应用转换规则
     U0 = transform_config['U0']
@@ -57,7 +57,8 @@ if __name__ == "__main__":
 
     plt.figure(figsize=config['plot'].get('figsize', (10, 6)))
     for file_config in config['files']:
-        data = read_and_transform_data(file_config['path'], config['transform'])
+        skiprows = file_config.get('skiprows', 0)
+        data = read_and_transform_data(file_config['path'], config['transform'],skiprows)
         plot_data(data, config['plot'], file_config.get('label', 'Data'))
     plt.title(config['plot'].get('title', 'Data Plot'))
     plt.xlabel(config['plot'].get('xlabel', ''))
