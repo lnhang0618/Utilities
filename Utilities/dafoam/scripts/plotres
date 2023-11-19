@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+import sys
+import matplotlib.pyplot as plt
+import os
+
+
+# 检查是否有命令行参数传入
+if len(sys.argv) > 1:
+    file_path = sys.argv[1]  # 使用命令行指定的文件
+else:
+    # 如果没有指定文件，则在当前目录查找xxx.txt
+    file_path = './opt_IPOPT.txt'
+
+# 初始化列表来存储目标值
+objectives = []
+
+# 标记变量，用于确定何时开始读取数据
+start_reading = False
+
+# 读取并解析文件
+with open(file_path, 'r') as file:
+    for line in file:
+        if line.startswith('iter'):
+            start_reading = True
+            continue  # 跳过包含'iter'的行
+        if start_reading:
+            parts = line.split()
+            try:
+                # 尝试将第二列的值转换为浮点数
+                objective = float(parts[1])
+                objectives.append(objective)
+            except ValueError:
+                # 如果转换失败，跳过这一行
+                continue
+
+# 绘制图表
+plt.plot(objectives)
+plt.xlabel('Iteration')
+plt.ylabel('Objective')
+plt.title('Objective Value Over Iterations')
+plt.savefig('opt_IPOPT.png')
