@@ -22,6 +22,8 @@ plot:
   title: "Plot Title"
   xlabel: "X Axis Label"
   ylabel: "Y Axis Label"
+  xlim:[xmin,xmax] (option)
+  ylim:[ymin,ymax]
   figsize: [12, 6]
 """)
 
@@ -63,5 +65,14 @@ if __name__ == "__main__":
     plt.title(config['plot'].get('title', 'Data Plot'))
     plt.xlabel(config['plot'].get('xlabel', ''))
     plt.ylabel(config['plot'].get('ylabel', ''))
+    # 设置坐标轴范围
+    xlim = config['plot'].get('xlim')
+    if xlim:
+        plt.xlim(xlim[0], xlim[1])
+
+    ylim = config['plot'].get('ylim')
+    if ylim:
+        plt.ylim(ylim[0], ylim[1])
+
     plt.legend()
     plt.savefig("cf.png")
