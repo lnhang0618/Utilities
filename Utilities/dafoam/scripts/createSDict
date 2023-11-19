@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# 检查参数数量
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <field1> [field2] ..."
+    exit 1
+fi
+
+# 读取字段参数
+fields=("$@")
+
+# 定义目标文件的路径
+destination_path="./system/sampleDict"
+
+# 创建system文件夹如果它不存在
+mkdir -p ./system
+
+# 生成sampleDict文件
+{
+    echo "/*--------------------------------*- C++ -*----------------------------------*\\"
+    echo "| =========                 |                                                 |"
+    echo "| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |"
+    echo "|  \\    /   O peration     | Version:  8                                     |"
+    echo "|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |"
+    echo "|    \\/     M anipulation  |                                                 |"
+    echo "\\*---------------------------------------------------------------------------*/"
+    echo "FoamFile"
+    echo "{"
+    echo "    version     2.0;"
+    echo "    format      ascii;"
+    echo "    class       dictionary;"
+    echo "    object      sampleDict;"
+    echo "}"
+    echo "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //"
+    echo ""
+    echo "type surfaces;"
+    echo ""
+    echo "interpolationScheme cellPoint;"
+    echo ""
+    echo "surfaces"
+    echo "("
+    echo "    lowerWallSurface"
+    echo "    {"
+    echo "        type patch;"
+    echo "        patches (lowerWall);"
+    echo "        interpolate true;"
+    echo "    }"
+    echo ");"
+    echo ""
+    echo "fields"
+    echo "("
+    for field in "${fields[@]}"; do
+        echo "    $field"
+    done
+    echo ");"
+    echo ""
+    echo "// ************************************************************************* //"
+} > "$destination_path"
+
+# 打印成功信息
+echo "sampleDict for surface type has been created at $destination_path"
