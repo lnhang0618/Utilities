@@ -33,7 +33,7 @@ def read_config(config_file):
 
 def read_and_transform_data(file_path, transform_config):
     # 读取RAW文件
-    data = pd.read_csv(file_path, delim_whitespace=True, header=None)
+    data = pd.read_csv(file_path, delim_whitespace=True, error_bad_lines=False,header=None)
 
     # 应用转换规则
     U0 = transform_config['U0']
