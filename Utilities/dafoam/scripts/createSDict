@@ -37,6 +37,8 @@ mkdir -p ./system
     echo ""
     echo "interpolationScheme cellPoint;"
     echo ""
+    echo "surfaceFormat vtk;"
+    echo ""
     echo "surfaces"
     echo "("
     echo "    lowerWallSurface"
