@@ -38,7 +38,7 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     # 应用转换规则
     U0 = transform_config['U0']
     nu = transform_config['nu']
-    data['x'] = 5.4 * data.iloc[:, 0] / nu  # 根据规则计算横坐标
+    data['x'] = U0 * data.iloc[:, 0] / nu  # 根据规则计算横坐标
     data['y'] = -2 * data.iloc[:, 3] / U0**2  # 根据规则计算纵坐标
     return data
 
