@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# 检查是否提供了时间步参数
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <timeStep>"
+    exit 1
+fi
+
+# 读取时间步参数
+time_step=$1
+
+# 执行postProcess命令
+postProcess -func sampleDict -time $time_step
