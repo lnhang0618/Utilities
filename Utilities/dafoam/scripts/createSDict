@@ -64,7 +64,7 @@ formatted_patches=$(echo $patch_list | sed 's/,/ /g')
     echo "    {"
     echo "        type patch;"
     echo "        patches ($formatted_patches);"
-    echo "        interpolate true;"
+    echo "        interpolate false;"
     echo "    }"
     echo ");"
     echo ""
