@@ -1,12 +1,28 @@
 #!/bin/bash
 
+# 显示帮助信息
+function show_help {
+    echo "Usage: $0 <surfaceName> <patch1>[,patch2,...] <field1> [field2] ..."
+    echo "  <surfaceName>: 名称用于标识采样表面"
+    echo "  <patch1>[,patch2,...]: 采样的面，用逗号分隔"
+    echo "  <field1> [field2] ... : 要采样的字段，如velocity, pressure等"
+    echo "示例："
+    echo "  $0 mySurface \"wall,inlet\" velocity pressure"
+    echo "    这个例子会创建一个采样配置，针对名为'mySurface'的表面，"
+    echo "    采样'wall'和'inlet'面上的'velocity'和'pressure'字段。"
+}
+
 # 检查参数数量
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <field1> [field2] ..."
+if [ "$#" -lt 3 ]; then
+    show_help
     exit 1
 fi
 
-# 读取字段参数
+# 读取surface和patches参数
+surface_name=$1
+shift
+patch_list=$1
+shift
 fields=("$@")
 
 # 定义目标文件的路径
@@ -15,9 +31,12 @@ destination_path="./system/sampleDict"
 # 创建system文件夹如果它不存在
 mkdir -p ./system
 
+# 将逗号分隔的patches转换为OpenFOAM格式
+formatted_patches=$(echo $patch_list | sed 's/,/ /g')
+
 # 生成sampleDict文件
 {
-    echo "/*--------------------------------*- C++ -*----------------------------------*\\"
+     echo "/*--------------------------------*- C++ -*----------------------------------*\\"
     echo "| =========                 |                                                 |"
     echo "| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |"
     echo "|  \\    /   O peration     | Version:  8                                     |"
@@ -41,10 +60,10 @@ mkdir -p ./system
     echo ""
     echo "surfaces"
     echo "("
-    echo "    lowerWallSurface"
+    echo "    $surface_name"
     echo "    {"
     echo "        type patch;"
-    echo "        patches (lowerWall);"
+    echo "        patches ($formatted_patches);"
     echo "        interpolate true;"
     echo "    }"
     echo ");"
