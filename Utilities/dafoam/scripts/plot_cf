@@ -59,11 +59,16 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     return data
 
 def plot_data(data, plot_config, label,type='plot'):
+    
+    x = data['x'].to_numpy()
+    y = data['y'].to_numpy()
+    
     # 绘图
     if type == 'plot':
-        plt.plot(data['x'], data['y'], label=label)
+        plt.plot(x, y, label=label)
     elif type == 'scatter':
-        plt.scatter(data['x'], data['y'], label=label,marker='x')
+        plt.scatter(x, y, label=label,marker='x')
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
