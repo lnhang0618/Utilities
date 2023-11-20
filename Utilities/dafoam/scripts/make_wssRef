@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+import yaml
+import sys
+import pandas as pd
+import numpy as np
+
+def print_yaml_example():
+    example_yaml = """
+    raw_data:
+        file: path/to/raw_data.csv
+        skiprows: 1
+    experiment_data:
+        file: path/to/experiment_data.csv
+        skiprows: 2
+    output_file: path/to/output.txt
+    threshold: 0.1
+    transform:
+        U0: 5.4
+        nu: 1.5e-5
+
+    """
+    print("YAML配置文件示例:\n", example_yaml)
+
+def load_config(config_file):
+    with open(config_file, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
+
+def load_data(file_path, skiprows):
+    return pd.read_csv(file_path, sep="\s+", skiprows=skiprows, header=None)
+
+def process_experiment_data(exp_data,transform_config):
+    
+    # 应用转换规则
+    U0 = transform_config['U0']
+    nu = transform_config['nu']
+    
+    exp_data['x_coord_processed'] = exp_data.iloc[:, 0] * nu/U0  # 仅作为示例
+    exp_data['wss'] = exp_data.iloc[:, 1] * U0**2 / 2  # 仅作为示例
+    return exp_data
+
+
+
+
+def process_data(raw_data, exp_data, max_distance):
+    results = [1e16] * len(raw_data)  # 初始化所有结果为1e16
+
+    for _, exp_row in exp_data.iterrows():
+        x_exp = exp_row['x_coord_processed']
+
+        # 计算与当前exp_data点最接近的raw_data点
+        distances = abs(raw_data[0] - x_exp)  # 假设'0'列是x坐标
+        min_distance = distances.min()
+
+        # 如果最小距离小于阈值，则更新相应的raw_data点
+        if min_distance < max_distance:
+            closest_index = distances.idxmin()
+            results[closest_index] = exp_row['wss']
+
+    return results
+
+
+
+
+def save_results(results, output_file):
+    with open(output_file, 'w') as f:
+        for value in results:
+            f.write(f"{value}\n")
+
+def main():
+    if len(sys.argv) < 2:
+        print("请提供YAML配置文件的路径。")
+        print_yaml_example()
+        return
+    config_file = sys.argv[1]
+    config = load_config(config_file)
+
+    # 使用配置文件中的skiprows参数
+    raw_data = load_data(config['raw_data']['file'], config['raw_data']['skiprows'])
+    exp_data = load_data(config['experiment_data']['file'], config['experiment_data']['skiprows'])
+    exp_data = process_experiment_data(exp_data, config['transform'])
+    
+    print(raw_data)
+    print(exp_data)
+    
+    results = process_data(raw_data, exp_data, config['threshold'])
+    save_results(results, config['output_file'])
+
+
+if __name__ == "__main__":
+    main()
