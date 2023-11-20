@@ -54,8 +54,11 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     # 应用转换规则
     U0 = transform_config['U0']
     nu = transform_config['nu']
-    data['x'] = U0 * data.iloc[:, 0] / nu  # 根据规则计算横坐标
-    data['y'] = 2 * data.iloc[:, 3] / U0**2  # 根据规则计算纵坐标
+    data['x'] = U0 * data.iloc[:, 0] / nu  
+    
+    # 如果y>0，取y=2*y/U0^2,否则取y=-2*y/U0^2
+    data['y'] = data.iloc[:, 3].apply(lambda y: 2 * y / (U0 * U0) if y > 0 else -2 * y / (U0 * U0))
+    
     return data
 
 def plot_data(data, plot_config, label,type='plot'):
