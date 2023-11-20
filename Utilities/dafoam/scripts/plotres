@@ -24,6 +24,8 @@ with open(file_path, 'r') as file:
         if line.startswith('iter'):
             start_reading = True
             continue  # 跳过包含'iter'的行
+        if line.startswith('Number of Iterations'):
+            start_reading = False
         if start_reading:
             parts = line.split()
             try:
