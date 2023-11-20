@@ -4,37 +4,33 @@ import sys
 import matplotlib.pyplot as plt
 import os
 
-
 # 检查是否有命令行参数传入
 if len(sys.argv) > 1:
     file_path = sys.argv[1]  # 使用命令行指定的文件
 else:
-    # 如果没有指定文件，则在当前目录查找xxx.txt
-    file_path = './opt_IPOPT.txt'
+    file_path = './opt_IPOPT.txt'  # 如果没有指定文件，则在当前目录查找opt_IPOPT.txt
 
-# 初始化列表来存储目标值
-objectives = []
+objectives = []  # 初始化列表来存储目标值
+start_reading = False  # 标记变量，用于确定何时开始读取数据
 
-# 标记变量，用于确定何时开始读取数据
-start_reading = False
-
-# 读取并解析文件
 with open(file_path, 'r') as file:
     for line in file:
+        line = line.strip()  # 去除行首尾的空白字符（包括换行符和空格）
+
         if line.startswith('iter'):
             start_reading = True
             continue  # 跳过包含'iter'的行
-        if line.startswith('Number of Iterations'):
+        if not line:
             start_reading = False
+            continue
         if start_reading:
             parts = line.split()
-            try:
-                # 尝试将第二列的值转换为浮点数
+            if len(parts) > 1:
                 objective = float(parts[1])
-                objectives.append(objective)
-            except ValueError:
-                # 如果转换失败，跳过这一行
-                continue
+                objectives.append(objective)  # 将目标值添加到列表中
+            else:
+                print(f"数据格式错误或行不完整: {line}")
+                continue  # 跳过这行或做一些其他的错误处理
 
 # 绘制图表
 plt.plot(objectives)
