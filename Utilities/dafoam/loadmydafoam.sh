@@ -13,5 +13,3 @@ else
     echo "Scripts directory not found: $SCRIPTS_PATH"
 fi
 
-# 输出新的PATH以供检查
-echo "Current PATH: $PATH"
