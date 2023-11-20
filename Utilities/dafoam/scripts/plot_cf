@@ -14,9 +14,16 @@ transform:
 
 files:
   - path: "path/to/your/rawfile1.raw"
-    label: "Experiment"
+    label: "case1"
+    skiprows: 1
   - path: "path/to/your/rawfile2.raw"
-    label: "Result"
+    label: "case2"
+    skiprows: 1
+    
+exp_files:(option)
+    - path: "path/to/your/rawfile1.raw"
+        label: "Experiment"
+        skiprows: 1
 
 plot:
   title: "Plot Title"
@@ -33,6 +40,13 @@ def read_config(config_file):
         config = yaml.safe_load(file)
     return config
 
+def read_data(file_path, skiprows):
+    # 读取RAW文件
+    data = pd.read_csv(file_path, delim_whitespace=True, skiprows=skiprows,header=None)
+    data['x'] = data.iloc[:, 0]  # 根据规则计算横坐标
+    data['y'] = data.iloc[:, 1]  # 根据规则计算纵坐标
+    return data
+
 def read_and_transform_data(file_path, transform_config,skiprows):
     # 读取RAW文件
     data = pd.read_csv(file_path, delim_whitespace=True, skiprows=skiprows,header=None)
@@ -44,9 +58,12 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     data['y'] = 2 * data.iloc[:, 3] / U0**2  # 根据规则计算纵坐标
     return data
 
-def plot_data(data, plot_config, label):
+def plot_data(data, plot_config, label,type='plot'):
     # 绘图
-    plt.plot(data['x'], data['y'], label=label)
+    if type == 'plot':
+        plt.plot(data['x'], data['y'], label=label)
+    elif type == 'scatter':
+        plt.scatter(data['x'], data['y'], label=label,marker='x')
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -62,6 +79,14 @@ if __name__ == "__main__":
         skiprows = file_config.get('skiprows', 0)
         data = read_and_transform_data(file_config['path'], config['transform'],skiprows)
         plot_data(data, config['plot'], file_config.get('label', 'Data'))
+    
+    if 'exp_files' in config:
+        for file_config in config['exp_files']:
+            skiprows = file_config.get('skiprows', 0)
+            data = read_data(file_config['path'],skiprows)
+            plot_data(data, config['plot'], file_config.get('label', 'Data'),type='scatter')
+    
+    
     plt.title(config['plot'].get('title', 'Data Plot'))
     plt.xlabel(config['plot'].get('xlabel', ''))
     plt.ylabel(config['plot'].get('ylabel', ''))
