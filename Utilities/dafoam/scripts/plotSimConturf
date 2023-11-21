@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+
+import pyvista as pv
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+import sys
+from scipy.interpolate import griddata
+
+def read_config(config_file):
+    with open(config_file, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
+
+def show_yaml_example():
+    print("示例文件配置：")
+    print("""
+    vtkFilePath: 'path/to/vtk/gamma.vtk'
+    field: 'gamma'
+    plot:
+        title: 'Gamma Distribution in XY Plane'
+        xlabel: 'X'
+        ylabel: 'Y'
+        colorMap: 'jet'
+        xlim: [0, 3]    # 可选
+        ylim: [0, 0.01]    # 可选
+        resolution:
+            x: 400
+            y: 200
+        savePath: 'gamma.png'
+    """)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("请提供配置文件！")
+        show_yaml_example()
+        print("Usage: python script.py <config.yml>")
+        sys.exit(1)
+
+    config_file = sys.argv[1]
+    config = read_config(config_file)
+
+    # 读取VTK文件
+    print("正在读取VTK文件...")
+    mesh = pv.read(config['vtkFilePath'])
+
+    # 获取单元格中心点坐标
+    print("获取单元格中心点坐标...")
+    cell_centers = mesh.cell_centers()
+
+    # 提取XY平面的数据
+    print("提取XY平面的数据...")
+    points = np.c_[cell_centers.points[:, 0], cell_centers.points[:, 1]]
+    values = cell_centers[config['field']]
+
+    # 获取网格分辨率
+    resolution_x = config['plot']['resolution']['x']
+    resolution_y = config['plot']['resolution']['y']
+
+    # 创建网格用于插值
+    grid_x, grid_y = np.meshgrid(np.linspace(points[:,0].min(), points[:,0].max(), resolution_x),
+                                 np.linspace(points[:,1].min(), points[:,1].max(), resolution_y))
+
+    # 数据插值
+    grid_values = griddata(points, values, (grid_x, grid_y), method='cubic')
+
+    # 绘制云图
+    plt.figure(figsize=config['plot'].get('figsize', (10, 6)))
+    plt.contourf(grid_x, grid_y, grid_values, levels=100, cmap=config['plot']['colorMap'])
+    plt.colorbar(label=config['field'])
+    plt.xlabel(config['plot']['xlabel'])
+    plt.ylabel(config['plot']['ylabel'])
+    plt.title(config['plot']['title'])
+
+    # 设置坐标轴范围
+    xlim = config['plot'].get('xlim')
+    if xlim:
+        plt.xlim(xlim[0], xlim[1])
+
+    ylim = config['plot'].get('ylim')
+    if ylim:
+        plt.ylim(ylim[0], ylim[1])
+
+    plt.savefig(config['plot']['savePath'], dpi=300)
