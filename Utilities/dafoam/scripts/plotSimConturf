@@ -28,6 +28,10 @@ def show_yaml_example():
             x: 400
             y: 200
         savePath: 'gamma.png'
+    transform(optional):
+        Re: 5.4e6
+        nu: 1.5e-5
+        U0: 5.4
     """)
 
 if __name__ == "__main__":
@@ -72,6 +76,10 @@ if __name__ == "__main__":
     plt.ylabel(config['plot']['ylabel'])
     plt.title(config['plot']['title'])
 
+    # 额外绘制一条竖线
+    if 'transform' in config:
+        plt.axvline(x=config['transform']["Re"]*config['transform']["nu"]/config['transform']["U0"], color='k', linestyle='--')
+    
     # 设置坐标轴范围
     xlim = config['plot'].get('xlim')
     if xlim:
@@ -80,5 +88,6 @@ if __name__ == "__main__":
     ylim = config['plot'].get('ylim')
     if ylim:
         plt.ylim(ylim[0], ylim[1])
+
 
     plt.savefig(config['plot']['savePath'], dpi=300)
