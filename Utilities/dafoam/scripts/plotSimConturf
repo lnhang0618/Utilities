@@ -29,6 +29,7 @@ def show_yaml_example():
             y: 200
         savePath: 'gamma.png'
     transform(optional):
+        enable: True
         Re: 5.4e6
         nu: 1.5e-5
         U0: 5.4
@@ -76,8 +77,8 @@ if __name__ == "__main__":
     plt.ylabel(config['plot']['ylabel'])
     plt.title(config['plot']['title'])
 
-    # 额外绘制一条竖线
-    if 'transform' in config:
+    # 如开启了转换，添加特定的参考线
+    if config["transform"]["enable"]:
         plt.axvline(x=config['transform']["Re"]*config['transform']["nu"]/config['transform']["U0"], color='k', linestyle='--')
     
     # 设置坐标轴范围
