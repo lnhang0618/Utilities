@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import yaml
 import sys
+from myplotstyle import AcademicPlot
 
 def show_yaml_example():
     print("YAML配置文件示例:")
@@ -16,22 +16,32 @@ files:
   - path: "path/to/your/rawfile1.raw"
     label: "case1"
     skiprows: 1
+    type: "line" # 可选，默认为 'line'
+    marker: "o" # 可选
+    markerevery: 100 # 可选
+    
   - path: "path/to/your/rawfile2.raw"
     label: "case2"
     skiprows: 1
-    
-exp_files:(option)
-    - path: "path/to/your/rawfile1.raw"
-        label: "Experiment"
-        skiprows: 1
+    type: "scatter" # 可选，默认为 'line'
+    marker: "x" # 可选
+    markerevery: 100 # 可选
+
+exp_files: # (可选)
+  - path: "path/to/your/experiment_file.raw"
+    label: "Experiment"
+    skiprows: 1
+    type: "scatter" # 可选，默认为 'line'
+    marker: "+" # 可选
 
 plot:
   title: "Plot Title"
   xlabel: "X Axis Label"
   ylabel: "Y Axis Label"
-  xlim:[xmin,xmax] (option)
-  ylim:[ymin,ymax]
+  xlim: [xmin, xmax] # (可选)
+  ylim: [ymin, ymax] # (可选)
   figsize: [12, 6]
+
 """)
 
 
@@ -61,17 +71,15 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     
     return data
 
-def plot_data(data, plot_config, label,type='plot'):
-    
+def plot_data(academic_plot, data, label, marker=None, plot_type='line',markevery=None):
     x = data['x'].to_numpy()
     y = data['y'].to_numpy()
     
     # 绘图
-    if type == 'plot':
-        plt.plot(x, y, label=label)
-    elif type == 'scatter':
-        plt.scatter(x, y, label=label,marker='x')
-
+    if plot_type == 'line':
+        academic_plot.plot_line(x, y, label=label, marker=marker,markevery=markevery)
+    elif plot_type == 'scatter':
+        academic_plot.plot_scatter(x, y, label=label, marker=marker)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -82,30 +90,30 @@ if __name__ == "__main__":
     config_file = sys.argv[1]
     config = read_config(config_file)
 
-    plt.figure(figsize=config['plot'].get('figsize', (10, 6)))
+    my_plot = AcademicPlot(figsize=config['plot'].get('figsize', (10, 6)))
+    
     for file_config in config['files']:
         skiprows = file_config.get('skiprows', 0)
-        data = read_and_transform_data(file_config['path'], config['transform'],skiprows)
-        plot_data(data, config['plot'], file_config.get('label', 'Data'))
+        data = read_and_transform_data(file_config['path'], config['transform'], skiprows)
+        plot_data(my_plot, data, file_config.get('label', 'Data'), marker=file_config.get('marker', None),markevery=file_config.get("markevery",None),plot_type=file_config.get('type', 'line'))
     
     if 'exp_files' in config:
         for file_config in config['exp_files']:
             skiprows = file_config.get('skiprows', 0)
-            data = read_data(file_config['path'],skiprows)
-            plot_data(data, config['plot'], file_config.get('label', 'Data'),type='scatter')
+            data = read_data(file_config['path'], skiprows)
+            plot_data(my_plot, data, file_config.get('label', 'Experiment'), marker=file_config.get('marker', None),markevery=file_config.get("markevery",None),plot_type=file_config.get('type', 'scatter'))
+
+    my_plot.set_labels(title=config['plot'].get('title', 'Data Plot'),
+                       xlabel=config['plot'].get('xlabel', ''),
+                       ylabel=config['plot'].get('ylabel', ''))
     
-    
-    plt.title(config['plot'].get('title', 'Data Plot'))
-    plt.xlabel(config['plot'].get('xlabel', ''))
-    plt.ylabel(config['plot'].get('ylabel', ''))
-    # 设置坐标轴范围
     xlim = config['plot'].get('xlim')
     if xlim:
-        plt.xlim(xlim[0], xlim[1])
+        my_plot.ax.set_xlim(xlim[0], xlim[1])
 
     ylim = config['plot'].get('ylim')
     if ylim:
-        plt.ylim(ylim[0], ylim[1])
+        my_plot.ax.set_ylim(ylim[0], ylim[1])
 
-    plt.legend()
-    plt.savefig("cf.png")
+    my_plot.show()
+    my_plot.save("cf.png")

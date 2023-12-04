@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import pyvista as pv
-import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 import sys
 from scipy.interpolate import griddata
+from myplotstyle import AcademicPlot
 
 def read_config(config_file):
     with open(config_file, 'r') as file:
@@ -30,9 +30,7 @@ def show_yaml_example():
         savePath: 'gamma.png'
     transform(optional):
         enable: True
-        Re: 5.4e6
-        nu: 1.5e-5
-        U0: 5.4
+        x: 0.5
     """)
 
 if __name__ == "__main__":
@@ -69,26 +67,26 @@ if __name__ == "__main__":
     # 数据插值
     grid_values = griddata(points, values, (grid_x, grid_y), method='cubic')
 
+    # 使用 AcademicPlot 创建图表
+    plot = AcademicPlot(figsize=(8, 6))
+    plot.set_labels(title=config['plot']['title'], xlabel=config['plot']['xlabel'], ylabel=config['plot']['ylabel'])
+    
     # 绘制云图
-    plt.figure(figsize=config['plot'].get('figsize', (10, 6)))
-    plt.contourf(grid_x, grid_y, grid_values, levels=100, cmap=config['plot']['colorMap'])
-    plt.colorbar(label=config['field'])
-    plt.xlabel(config['plot']['xlabel'])
-    plt.ylabel(config['plot']['ylabel'])
-    plt.title(config['plot']['title'])
+    plot.plot_contour(grid_x, grid_y, grid_values, cmap=config['plot']['colorMap'], colorbar_label=config['field'])
 
     # 如开启了转换，添加特定的参考线
     if config["transform"]["enable"]:
-        plt.axvline(x=config['transform']["Re"]*config['transform']["nu"]/config['transform']["U0"], color='k', linestyle='--')
-    
+        plot.ax.axvline(x=config["transform"]["x"], color='black', linestyle='--')
+
     # 设置坐标轴范围
     xlim = config['plot'].get('xlim')
     if xlim:
-        plt.xlim(xlim[0], xlim[1])
+        plot.ax.set_xlim(xlim[0], xlim[1])
 
     ylim = config['plot'].get('ylim')
     if ylim:
-        plt.ylim(ylim[0], ylim[1])
+        plot.ax.set_ylim(ylim[0], ylim[1])
 
-
-    plt.savefig(config['plot']['savePath'], dpi=300)
+    # 显示并保存图表
+    plot.show()
+    plot.save(config['plot']['savePath'])
