@@ -75,7 +75,7 @@ if __name__ == "__main__":
     plot.plot_contour(grid_x, grid_y, grid_values, cmap=config['plot']['colorMap'], colorbar_label=config['field'])
 
     # 如开启了转换，添加特定的参考线
-    if config["transform"]["enable"]:
+    if config.get('transform') and config['transform']['enable']:
         plot.ax.axvline(x=config["transform"]["x"], color='black', linestyle='--')
 
     # 设置坐标轴范围
