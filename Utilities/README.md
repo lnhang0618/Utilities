@@ -11,7 +11,7 @@
 
     1.绘制Cf曲线图
         在OpenFOAM的case目录下，创建yml文件，具体格式如下：
-        ```
+```
         transform:
   U0: 5.4
   nu: 1.5e-5
@@ -45,7 +45,7 @@ plot:
   xlim: [xmin, xmax] # (可选)
   ylim: [ymin, ymax] # (可选)
   figsize: [12, 6]
-  '''
+'''
         然后在终端中输入：
         ```
         createSDict (anyname) <patchName> <FieldName>
