@@ -1,18 +1,19 @@
 # CFD科研绘图工具
 
 ## 1. 介绍
-    该工具是为了方便CFD后处理而开发的，主要包括以下几个功能：
-    1.绘制Cf曲线图
-    2.绘制简易云图
-    3.残差图
+该工具是为了方便CFD后处理而开发的，主要包括以下几个功能：
+1. 绘制Cf曲线图
+2. 绘制简易云图
+3. 残差图
 
 ## 2. 使用方法
-    在Utilities/目录下，运行setup.py文件，将脚本路径注册到bashrc中，每次打开终端时，都会自动加载该脚本。
+在Utilities/目录下，运行setup.py文件，将脚本路径注册到bashrc中，每次打开终端时，都会自动加载该脚本。
 
-    1.绘制Cf曲线图
-        在OpenFOAM的case目录下，创建yml文件，具体格式如下：
-```
-        transform:
+### 2.1 绘制Cf曲线图
+在OpenFOAM的case目录下，创建yml文件，具体格式如下：
+
+```yaml
+transform:
   U0: 5.4
   nu: 1.5e-5
 
@@ -45,49 +46,45 @@ plot:
   xlim: [xmin, xmax] # (可选)
   ylim: [ymin, ymax] # (可选)
   figsize: [12, 6]
-'''
-        
+```
+
 然后在终端中输入：
-        ```
-        createSDict (anyname) <patchName> <FieldName>
+```bash
+createSDict (anyname) <patchName> <FieldName>
+sampleOnce (openfoam时间步: 例如1000)
+plot_cf (yml文件名)
+```
+即可绘制Cf曲线图。
 
-        sampleOnce (openfoam时间步: 例如1000)
+### 2.2 绘制简易云图
+在OpenFOAM的case目录下，创建yml文件，具体格式如下：
+```yaml
+vtkFilePath: 'path/to/vtk/gamma.vtk'
+field: 'gamma'
+plot:
+    title: 'Gamma Distribution in XY Plane'
+    xlabel: 'X'
+    ylabel: 'Y'
+    colorMap: 'jet'
+    xlim: [0, 3]    # 可选
+    ylim: [0, 0.01]    # 可选
+    resolution:
+        x: 400
+        y: 200
+    savePath: 'gamma.png'
+transform(optional):
+    enable: True
+    x: 0.5
+```
 
-        plot_cf (yml文件名)
-        ```
-        即可绘制Cf曲线图。
-
-    2.绘制简易云图
-        在OpenFOAM的case目录下，创建yml文件，具体格式如下：
-        ```
-        
-    vtkFilePath: 'path/to/vtk/gamma.vtk'
-    field: 'gamma'
-    plot:
-        title: 'Gamma Distribution in XY Plane'
-        xlabel: 'X'
-        ylabel: 'Y'
-        colorMap: 'jet'
-        xlim: [0, 3]    # 可选
-        ylim: [0, 0.01]    # 可选
-        resolution:
-            x: 400
-            y: 200
-        savePath: 'gamma.png'
-    transform(optional):
-        enable: True
-        x: 0.5
-
-        ```
 然后在终端中输入：
-        ```
-        foamToVTK -times yourTimeStep -fields '(yourField)'
+```bash
+foamToVTK -times yourTimeStep -fields '(yourField)'
+plotSimContour (yml文件名)
+```
 
-        plotSimContour (yml文件名)
-        ```
-
-3.绘制残差图
-        目前仅支持绘制dafoam的残差图，直接在case目录下运行：
-        ```
-        plotres
-        ```
+### 2.3 绘制残差图
+目前仅支持绘制dafoam的残差图，直接在case目录下运行：
+```bash
+plotres
+```
