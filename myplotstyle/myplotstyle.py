@@ -36,10 +36,10 @@ Tableau
 
 class AcademicPlot(object):
     default_line_styles = ['-', '--', '-.', ':','solid','dashed','dashdot','dotted']
+    default_line_marker = ['H', 'v', '<', '>', 'D', 'd', 'X', 'x']
     default_line_colors = ['#1f77b4','#e377c2', '#ff7f0e', '#2ca02c', '#9467bd', '#8c564b', '#7f7f7f ','#bcbd22']
-    default_line_marker = ['s']
     default_scatter_colors = ['#d62728','#17becf']
-    default_scatter_markers = ['^']
+    default_scatter_markers = ['^', 'o', 's', 'p', 'P']
     default_markevery = 10
     default_markersize = 10
 
@@ -56,8 +56,8 @@ class AcademicPlot(object):
 
 
     def set_base_style(self, tick_count):
-        self.ax.spines['top'].set_visible(False)
-        self.ax.spines['right'].set_visible(False)
+        self.ax.spines['top'].set_visible(True)
+        self.ax.spines['right'].set_visible(True)
         self.ax.xaxis.set_major_locator(MaxNLocator(tick_count))
         self.ax.yaxis.set_major_locator(MaxNLocator(tick_count))
         
@@ -118,12 +118,12 @@ class AcademicPlot(object):
         return contour
 
     def show(self):
-        plt.legend(frameon=False)
+        plt.legend(frameon=False,fontsize=self.default_frontsize,loc='best')
         plt.tight_layout()
         plt.show()
         
     def save(self, filename):
-        plt.legend(frameon=False)
+        plt.legend(frameon=False,fontsize=self.default_frontsize,loc='best')
         plt.tight_layout()
         plt.savefig(filename, dpi=300)
         plt.close()
