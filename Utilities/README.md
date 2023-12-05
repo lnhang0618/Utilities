@@ -46,7 +46,8 @@ plot:
   ylim: [ymin, ymax] # (可选)
   figsize: [12, 6]
 '''
-        然后在终端中输入：
+        
+然后在终端中输入：
         ```
         createSDict (anyname) <patchName> <FieldName>
 
@@ -78,14 +79,14 @@ plot:
         x: 0.5
 
         ```
-        然后在终端中输入：
+然后在终端中输入：
         ```
         foamToVTK -times yourTimeStep -fields '(yourField)'
 
         plotSimContour (yml文件名)
         ```
 
-    3.绘制残差图
+3.绘制残差图
         目前仅支持绘制dafoam的残差图，直接在case目录下运行：
         ```
         plotres
