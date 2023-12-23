@@ -71,13 +71,23 @@ def read_and_transform_data(file_path, transform_config,skiprows):
     
     return data
 
-def plot_data(academic_plot, data, label, marker=None, plot_type='line',markevery=None):
+def plot_data(academic_plot, data, label, marker=None, plot_type='line',markevery=None,show_markers=False):
     x = data['x'].to_numpy()
     y = data['y'].to_numpy()
     
+    plot_args = {
+        'label': label,
+    }
+    
+    if show_markers:
+        plot_args.update({
+            'marker': marker,
+            'markevery': markevery,
+        })
+    
     # 绘图
     if plot_type == 'line':
-        academic_plot.plot_line(x, y, label=label, marker=marker,markevery=markevery)
+        academic_plot.plot_line(x, y, **plot_args)
     elif plot_type == 'scatter':
         academic_plot.plot_scatter(x, y, label=label, marker=marker)
 
@@ -95,13 +105,31 @@ if __name__ == "__main__":
     for file_config in config['files']:
         skiprows = file_config.get('skiprows', 0)
         data = read_and_transform_data(file_config['path'], config['transform'], skiprows)
-        plot_data(my_plot, data, file_config.get('label', 'Data'), marker=file_config.get('marker', None),markevery=file_config.get("markevery",None),plot_type=file_config.get('type', 'line'))
+        
+        config_args = {
+            'marker': file_config.get('marker', None),
+            'markevery': file_config.get("markevery",None),
+            'show_markers': file_config.get('show_markers', False),
+            "plot_type": file_config.get('type', 'line'),
+            "label": file_config.get('label')
+        }
+        
+        plot_data(my_plot, data,**config_args)
     
     if 'exp_files' in config:
         for file_config in config['exp_files']:
             skiprows = file_config.get('skiprows', 0)
             data = read_data(file_config['path'], skiprows)
-            plot_data(my_plot, data, file_config.get('label', 'Experiment'), marker=file_config.get('marker', None),markevery=file_config.get("markevery",None),plot_type=file_config.get('type', 'scatter'))
+            
+            config_args = {
+                'marker': file_config.get('marker', None),
+                'markevery': file_config.get("markevery",None),
+                'show_markers': file_config.get('show_markers', True),
+                "plot_type": file_config.get('type', 'scatter'),
+                "label": file_config.get('label')
+            }
+            
+            plot_data(my_plot, data, **config_args)
 
     my_plot.set_labels(title=config['plot'].get('title', 'Data Plot'),
                        xlabel=config['plot'].get('xlabel', ''),
