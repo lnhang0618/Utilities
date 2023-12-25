@@ -8,13 +8,21 @@ plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['text.usetex'] = True
 
 class AcademicPlot(object):
-    def __init__(self, ax=None, figsize=(8, 6), tick_count=5,default_frontsize = 20,theme='bright'):
-        if ax is None:
-            self.fig, self.ax = plt.subplots(figsize=figsize)
-        else:
-            self.fig = ax.get_figure()
+    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 20,theme='bright'):
+        if ax is not None:
+            self.fig = ax.figure
             self.ax = ax
-        self.default_frontsize = default_frontsize
+        else:
+            # 根据nrows和ncols创建子图
+            self.fig, self.axs = plt.subplots(nrows, ncols, figsize=figsize)
+
+            # 如果只有一个子图，则将self.axs设置为单个轴对象
+            if nrows == 1 and ncols == 1:
+                self.ax = self.axs
+            else:
+                self.ax = None  # 在多子图情况下使用self.axs
+        
+        self.default_fontsize = fontsize
         self.set_base_style(tick_count)
         self.set_theme(theme)
         self.default_markersize = 10
@@ -36,37 +44,44 @@ class AcademicPlot(object):
         self.markers = cycle(['o', 's', 'D', '^'])
 
     def set_base_style(self, tick_count):
-        self.ax.spines['top'].set_visible(True)
-        self.ax.spines['right'].set_visible(True)
-        self.ax.xaxis.set_major_locator(MaxNLocator(tick_count))
-        self.ax.yaxis.set_major_locator(MaxNLocator(tick_count))
+        def apply_style(ax):
+            ax.spines['top'].set_visible(True)
+            ax.spines['right'].set_visible(True)
+            ax.xaxis.set_major_locator(MaxNLocator(tick_count))
+            ax.yaxis.set_major_locator(MaxNLocator(tick_count))
+
+            ax.tick_params(axis='both', which='major', length=10, width=2, direction='in')
+            ax.tick_params(axis='both', which='minor', length=5, width=1, direction='in')
+
+            for label in ax.get_xticklabels() + ax.get_yticklabels():
+                label.set_fontsize(self.default_fontsize)
+
+            ax.xaxis.set_minor_locator(AutoMinorLocator())
+            ax.yaxis.set_minor_locator(AutoMinorLocator())
+
+            for label in ax.xaxis.get_minorticklabels() + ax.yaxis.get_minorticklabels():
+                label.set_visible(False)
+
+        # 应用样式到单个ax或多个axs
+        if self.ax is not None:
+            apply_style(self.ax)
+        else:
+            for ax in self.axs.flat:
+                apply_style(ax)
+
+
+    ## 
+    ##        functions
+    ##
+
+    def set_title(self, title):
+        self.ax.set_title(title, fontsize=self.default_fontsize)
         
-        # 设置主刻度的大小和方向
-        self.ax.tick_params(axis='both', which='major', length=10, width=2, direction='in')
+    def set_xlabel(self, xlabel):
+        self.ax.set_xlabel(xlabel, fontsize=self.default_fontsize)
 
-        # 设置次刻度的大小和方向
-        self.ax.tick_params(axis='both', which='minor', length=5, width=1, direction='in')
-        
-        # 设置 x 轴和 y 轴刻度标签的字体大小
-        for label in self.ax.get_xticklabels():
-            label.set_fontsize(self.default_frontsize)
-        for label in self.ax.get_yticklabels():
-            label.set_fontsize(self.default_frontsize)
-            
-        # 添加次刻度，但不显示刻度标签
-        self.ax.xaxis.set_minor_locator(AutoMinorLocator())
-        self.ax.yaxis.set_minor_locator(AutoMinorLocator())
-
-        # 隐藏次刻度的标签
-        for label in self.ax.xaxis.get_minorticklabels():
-            label.set_visible(False)
-        for label in self.ax.yaxis.get_minorticklabels():
-            label.set_visible(False)
-
-    def set_labels(self, title="", xlabel="", ylabel=""):
-        self.ax.set_title(title, fontsize=self.default_frontsize)
-        self.ax.set_xlabel(xlabel, fontsize=self.default_frontsize)
-        self.ax.set_ylabel(ylabel, fontsize=self.default_frontsize)
+    def set_ylabel(self, ylabel):
+        self.ax.set_ylabel(ylabel, fontsize=self.default_fontsize)
 
     def plot_scatter(self, x, y, label=None, marker=None, color=None, is_filled=True, markersize=None):
         if marker is None:
@@ -126,13 +141,13 @@ class AcademicPlot(object):
         return contour
 
     def show(self):
-        plt.legend(frameon=False,fontsize=self.default_frontsize,loc='best')
+        plt.legend(frameon=False,fontsize=self.default_fontsize,loc='best')
         plt.tight_layout()
         self.fig.set_size_inches(8, 6)  # 设置图形的尺寸为8x6英寸
         plt.show()
         
-    def save(self, filename):
-        plt.legend(frameon=False,fontsize=self.default_frontsize,loc='best')
+    def savefig(self, filename):
+        plt.legend(frameon=False,fontsize=self.default_fontsize,loc='best')
         plt.tight_layout()
         self.fig.set_size_inches(8, 6)  # 设置图形的尺寸为8x6英寸
         plt.savefig(filename, bbox_inches='tight')

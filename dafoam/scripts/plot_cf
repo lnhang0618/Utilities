@@ -131,9 +131,9 @@ if __name__ == "__main__":
             
             plot_data(my_plot, data, **config_args)
 
-    my_plot.set_labels(title=config['plot'].get('title', 'Data Plot'),
-                       xlabel=config['plot'].get('xlabel', ''),
-                       ylabel=config['plot'].get('ylabel', ''))
+    my_plot.set_title(title=config['plot'].get('title', 'Data Plot'))
+    my_plot.set_xlabel(xlabel=config['plot'].get('xlabel', ''))
+    my_plot.set_ylabel(ylabel=config['plot'].get('ylabel', ''))
     
     xlim = config['plot'].get('xlim')
     if xlim:
