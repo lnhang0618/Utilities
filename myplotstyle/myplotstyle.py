@@ -74,16 +74,25 @@ class AcademicPlot(object):
     ##        functions
     ##
 
-    def set_title(self, title):
-        self.ax.set_title(title, fontsize=self.default_fontsize)
+    def set_title(self, title,ax=None):
+        if ax is None:
+            ax = self.ax
+        ax.set_title(title, fontsize=self.default_fontsize)
         
-    def set_xlabel(self, xlabel):
-        self.ax.set_xlabel(xlabel, fontsize=self.default_fontsize)
+    def set_xlabel(self, xlabel,ax=None):
+        if ax is None:
+            ax = self.ax
+        ax.set_xlabel(xlabel, fontsize=self.default_fontsize)
 
-    def set_ylabel(self, ylabel):
-        self.ax.set_ylabel(ylabel, fontsize=self.default_fontsize)
+    def set_ylabel(self, ylabel,ax=None):
+        if ax is None:
+            ax = self.ax
+        ax.set_ylabel(ylabel, fontsize=self.default_fontsize)
 
-    def plot_scatter(self, x, y, label=None, marker=None, color=None, is_filled=True, markersize=None):
+    def scatter(self, x, y, label=None, marker=None, color=None, is_filled=True, markersize=None,ax=None):
+        if ax is None:
+            ax = self.ax
+
         if marker is None:
             marker = next(self.markers)
         if color is None:
@@ -99,10 +108,13 @@ class AcademicPlot(object):
             's': markersize**2
         }
 
-        self.ax.scatter(x, y, **scatter_args)
+        ax.scatter(x, y, **scatter_args)
 
 
-    def plot_line(self, x, y, label=None, linestyle=None, linewidth=2, color=None, marker=None, markevery=None, show_markers=False):
+    def plot(self, x, y, label=None, linestyle=None, linewidth=2, color=None, marker=None, markevery=None, show_markers=False,ax=None):
+        if ax is None:
+            ax = self.ax
+        
         if linestyle is None:
             linestyle = next(self.line_styles)
         if color is None:
@@ -129,10 +141,10 @@ class AcademicPlot(object):
                 'markeredgecolor': color
             })
 
-        self.ax.plot(x, y, **plot_args)
+        ax.plot(x, y, **plot_args)
 
 
-    def plot_contour(self, X, Y, Z, cmap='jet', levels=100, colorbar_label=''):
+    def contourf(self, X, Y, Z, cmap='jet', levels=100, colorbar_label=''):
         # 绘制等高线图
         contour = self.ax.contourf(X, Y, Z, levels=levels, cmap=cmap)
         # 添加颜色条
