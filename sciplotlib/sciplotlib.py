@@ -3,13 +3,15 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator,ScalarFormatter
 from itertools import cycle
 import numpy as np
+import matplotlib
+
 
 # 设置字体和启用 LaTeX
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['text.usetex'] = True
 
 class AcademicPlot(object):
-    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 17,theme='bright'):
+    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 17,theme='bright',show_minor_ticks=True):
         if ax is not None:
             self.fig = ax.figure
             self.ax = ax
@@ -22,6 +24,8 @@ class AcademicPlot(object):
                 self.ax = self.axs
             else:
                 self.ax = None  # 在多子图情况下使用self.axs
+
+        self.show_minor_ticks = show_minor_ticks
         self.figsize = figsize
         self.fontsize = fontsize
         self.set_base_style(tick_count)
@@ -48,17 +52,21 @@ class AcademicPlot(object):
         def apply_style(ax):
             ax.spines['top'].set_visible(True)
             ax.spines['right'].set_visible(True)
-            ax.xaxis.set_major_locator(MaxNLocator(tick_count))
-            ax.yaxis.set_major_locator(MaxNLocator(tick_count))
 
             ax.tick_params(axis='both', which='major', length=self.fontsize/3, width=self.fontsize/15, direction='in')
-            ax.tick_params(axis='both', which='minor', length=self.fontsize/5, width=self.fontsize/30, direction='in')
+            ax.xaxis.set_major_locator(MaxNLocator(tick_count))
+            ax.yaxis.set_major_locator(MaxNLocator(tick_count))
 
             for label in ax.get_xticklabels() + ax.get_yticklabels():
                 label.set_fontsize(self.fontsize)
 
-            ax.xaxis.set_minor_locator(AutoMinorLocator())
-            ax.yaxis.set_minor_locator(AutoMinorLocator())
+            if self.show_minor_ticks:
+                ax.xaxis.set_minor_locator(AutoMinorLocator(tick_count))
+                ax.yaxis.set_minor_locator(AutoMinorLocator(tick_count))
+                ax.tick_params(axis='both', which='minor', length=self.fontsize/5, width=self.fontsize/30, direction='in')
+            else:
+                # 不显示副刻度
+                ax.tick_params(axis='both', which='minor', length=0)
 
             for label in ax.xaxis.get_minorticklabels() + ax.yaxis.get_minorticklabels():
                 label.set_visible(False)

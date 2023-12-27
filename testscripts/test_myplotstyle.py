@@ -1,4 +1,4 @@
-from myplotstyle import AcademicPlot
+from sciplotlib import AcademicPlot
 
 # 使用示例
 plot = AcademicPlot()

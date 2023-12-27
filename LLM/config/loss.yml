@@ -12,3 +12,4 @@ plot_setting:
     y_lim: [2, 8]
 
 sampling_rate: 1.0
+window_size: 20

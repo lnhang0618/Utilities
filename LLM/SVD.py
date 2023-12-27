@@ -1,6 +1,6 @@
 import torch
 
-from myplotstyle import AcademicPlot
+from sciplotlib import AcademicPlot
 from transformers import AutoModelForCausalLM, AutoTokenizer
 # torch.linalg.matrix_rank(t)
 

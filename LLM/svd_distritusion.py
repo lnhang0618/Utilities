@@ -1,4 +1,4 @@
-from myplotstyle import AcademicPlot
+from sciplotlib import AcademicPlot
 from transformers import AutoModelForCausalLM
 import torch
 import numpy as np

@@ -1,7 +1,7 @@
 import numpy as np
 import re
 import yaml
-from myplotstyle import AcademicPlot
+from sciplotlib import AcademicPlot
 import sys
 
 # 修改这个函数来解析YAML文件
@@ -10,23 +10,34 @@ def parse_yaml(yaml_file_path):
         config = yaml.safe_load(file)
     return config
 
-def parse_log(file_path, sampling_rate=1):
+def parse_log(file_path, sampling_rate=1, window_size=5):
     iter_nums = []
-    losses = []
-    counter = 0  # 添加一个计数器用于实现采样
+    raw_losses = []
+    smoothed_losses = []
+    counter = 0
 
     with open(file_path, 'r') as file:
         for line in file:
-            if counter % sampling_rate == 0:  # 每隔sampling_rate个样本点取一个数据点
+            if counter % sampling_rate == 0:
                 match = re.search(r'iter (\d+): loss (\d+\.\d+)', line)
                 if match:
                     iter_num = int(match.group(1))
                     loss = float(match.group(2))
                     iter_nums.append(iter_num)
-                    losses.append(loss)
+                    raw_losses.append(loss)
+                    
+                    # 计算移动平均
+                    if len(raw_losses) < window_size:
+                        # 如果还没有足够的点来填满窗口，则取目前所有点的平均
+                        smoothed_loss = np.mean(raw_losses)
+                    else:
+                        # 否则，取最近的window_size个点的平均
+                        smoothed_loss = np.mean(raw_losses[-window_size:])
+                    
+                    smoothed_losses.append(smoothed_loss)
             counter += 1
 
-    return iter_nums, losses
+    return iter_nums, smoothed_losses
 
 if __name__ == "__main__":
     # 接受一个YAML配置文件的路径
@@ -40,6 +51,7 @@ if __name__ == "__main__":
 
     log_files=config['log_files']
     sampling_rate=config['sampling_rate']
+    window_size=config.get('window_size',5)
     plot_setting=config.get('plot_setting',{})
 
     plot = AcademicPlot(figsize=(8, 6))
@@ -47,7 +59,7 @@ if __name__ == "__main__":
     for file_config in log_files:
         file_path = file_config['path']
         label = file_config['label']
-        iter_nums, losses = parse_log(file_path,sampling_rate=sampling_rate)
+        iter_nums, losses = parse_log(file_path,sampling_rate=sampling_rate,window_size=window_size)
         plot.plot(iter_nums, losses, label=label)  # 使用自定义标签
 
     plot.set_title("Loss Over Iterations")

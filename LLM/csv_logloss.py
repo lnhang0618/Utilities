@@ -1,7 +1,7 @@
 import numpy as np
 import re
 import yaml
-from myplotstyle import AcademicPlot
+from sciplotlib import AcademicPlot
 import sys
 import csv
 

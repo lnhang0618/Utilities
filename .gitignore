@@ -1,0 +1,15 @@
+# Ignore compiled files
+*.class
+*.jar
+*.war
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore build output directories
+/target/
+/bin/
+
+# ignore cache files for the site
+_pycache_/

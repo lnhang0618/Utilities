@@ -4,7 +4,7 @@
 LOAD_SCRIPT_DAFOAM_REL_PATH="dafoam/loadmydafoam.sh"
 
 # 第二个 load 脚本的相对路径
-LOAD_SCRIPT_PLOT_REL_PATH="myplotstyle/loadmyplot.sh"
+LOAD_SCRIPT_PLOT_REL_PATH="sciplotlib/loadmyplot.sh"
 
 # ~/.bashrc 文件的路径
 BASHRC="$HOME/.bashrc"

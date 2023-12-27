@@ -1,0 +1,1 @@
+from .sciplotlib import AcademicPlot
