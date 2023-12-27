@@ -157,6 +157,7 @@ class AcademicPlot(object):
         cbar = self.fig.colorbar(contour, ax=self.ax)
         cbar.set_label(colorbar_label)
         return contour
+
     
     def enable_scientific_notation(self, use_sci_notation=True, axis='both',ax=None):
         if ax is None:

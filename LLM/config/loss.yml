@@ -1,0 +1,14 @@
+log_files:
+  - path: /data/Data/LeonRho/logfile/lr-nokl.txt
+    label: lr-nokl
+  - path: /data/Data/LeonRho/logfile/random-kl-nofreeze.txt
+    label: random-kl-nofreeze
+  - path: /data/Data/LeonRho/logfile/random-nokl-nofreeze.txt
+    label: random-nokl-nofreeze
+  - path: /data/Data/LeonRho/logfile/random-kl0.4-200.txt
+    label: random-kl0.4-200
+plot_setting:
+    x_lim: [0, 8000]
+    y_lim: [2, 8]
+
+sampling_rate: 1.0

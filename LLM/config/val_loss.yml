@@ -1,0 +1,10 @@
+log_files:
+  - path: /data/Data/LeonRho/logfile/lr-nokl.csv
+    label: lr-nokl
+  - path: /data/Data/LeonRho/logfile/random-nokl-nofreeze.csv
+    label: random-nokl-nofreeze
+plot_setting:
+    x_lim: [0, 20000]
+    y_lim: [-1, 100000]
+
+sampling_rate: 1.0
