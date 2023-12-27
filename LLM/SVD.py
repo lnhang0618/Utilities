@@ -4,9 +4,7 @@ from myplotstyle import AcademicPlot
 from transformers import AutoModelForCausalLM, AutoTokenizer
 # torch.linalg.matrix_rank(t)
 
-
-
-ck_path = "/mnt/pool2/tmp/Llama-2-7b-chat-hf"
+ck_path = "/data/Data/LeonRho/model/Llama-2-7b-hf"
 model = AutoModelForCausalLM.from_pretrained(ck_path).state_dict()
 
 print(model.keys())
@@ -71,7 +69,7 @@ for key in model.keys():
                     mlp_down_proj_list_g5.append((S > threshold).sum().item())
                 
 # Create a figure with subplots
-plt = AcademicPlot(nrows=4,ncols=3, figsize=(25, 10),fontsize=7)
+plt = AcademicPlot(nrows=4,ncols=4, figsize=(24, 18),fontsize=20)
 
 # Plotting the sum of singular values for each component
 plt.plot(layer_numbers, attn_q_list_sum, marker='o',ax=plt.axs[0, 0])
@@ -91,24 +89,25 @@ plt.set_title("Sum of Singular Values (mlp_down_proj)",ax=plt.axs[1, 2])
 
 # Plotting the number of singular values greater than 5 for each component
 plt.plot(layer_numbers, attn_q_list_g5, marker='o',ax=plt.axs[2, 0])
-plt.set_title("Number of Singular Values > 5 (attn_q)",ax=plt.axs[2, 0])
+plt.set_title("Number of Singular Values $\geq$ 5 (attn_q)",ax=plt.axs[2, 0])
 plt.plot(layer_numbers, attn_k_list_g5, marker='o',ax=plt.axs[2, 1])
-plt.set_title("Number of Singular Values > 5 (attn_k)",ax=plt.axs[2, 1])
+plt.set_title("Number of Singular Values $\geq$ 5 (attn_k)",ax=plt.axs[2, 1])
 plt.plot(layer_numbers, attn_v_list_g5, marker='o',ax=plt.axs[2, 2])
-plt.set_title("Number of Singular Values > 5 (attn_v)",ax=plt.axs[2, 2])
+plt.set_title("Number of Singular Values $\geq$ 5 (attn_v)",ax=plt.axs[2, 2])
 plt.plot(layer_numbers, o_proj_list_g5, marker='o',ax=plt.axs[2, 3])
-plt.set_title("Number of Singular Values > 5 (o_proj)",ax=plt.axs[2, 3])
+plt.set_title("Number of Singular Values $\geq$ 5 (o_proj)",ax=plt.axs[2, 3])
 plt.plot(layer_numbers, mlp_gate_proj_list_g5, marker='o',ax=plt.axs[3, 0])
-plt.set_title("Number of Singular Values > 5 (mlp_gate_proj)",ax=plt.axs[3, 0])
+plt.set_title("Number of Singular Values $\geq$ 5 (mlp_gate_proj)",ax=plt.axs[3, 0])
 plt.plot(layer_numbers, mlp_up_proj_list_g5, marker='o',ax=plt.axs[3, 1])
-plt.set_title("Number of Singular Values > 5 (mlp_up_proj)",ax=plt.axs[3, 1])
+plt.set_title("Number of Singular Values $\geq$ 5 (mlp_up_proj)",ax=plt.axs[3, 1])
 plt.plot(layer_numbers, mlp_down_proj_list_g5, marker='o',ax=plt.axs[3, 2])
-plt.set_title("Number of Singular Values > 5 (mlp_down_proj)",ax=plt.axs[3, 2])
+plt.set_title("Number of Singular Values $\geq$ 5 (mlp_down_proj)",ax=plt.axs[3, 2])
 
-# Setting labels for axes
 for ax in plt.axs.flat:
-    ax.set(xlabel='Layer Number', ylabel='Value')
+    plt.set_xlabel("Layer Number",ax=ax)
+    plt.set_ylabel("Value",ax=ax)
+
 
 # Adjust layout
-plt.savefig('test.png')
+plt.savefig('SVD_analysis.png')
 plt.show()
