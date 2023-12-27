@@ -1,14 +1,15 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator, AutoMinorLocator
+from matplotlib.ticker import MaxNLocator, AutoMinorLocator,ScalarFormatter
 from itertools import cycle
+import numpy as np
 
 # 设置字体和启用 LaTeX
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['text.usetex'] = True
 
 class AcademicPlot(object):
-    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 20,theme='bright'):
+    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 17,theme='bright'):
         if ax is not None:
             self.fig = ax.figure
             self.ax = ax
@@ -50,8 +51,8 @@ class AcademicPlot(object):
             ax.xaxis.set_major_locator(MaxNLocator(tick_count))
             ax.yaxis.set_major_locator(MaxNLocator(tick_count))
 
-            ax.tick_params(axis='both', which='major', length=self.fontsize/2, width=self.fontsize/10, direction='in')
-            ax.tick_params(axis='both', which='minor', length=self.fontsize/4, width=self.fontsize/20, direction='in')
+            ax.tick_params(axis='both', which='major', length=self.fontsize/3, width=self.fontsize/15, direction='in')
+            ax.tick_params(axis='both', which='minor', length=self.fontsize/5, width=self.fontsize/30, direction='in')
 
             for label in ax.get_xticklabels() + ax.get_yticklabels():
                 label.set_fontsize(self.fontsize)
@@ -88,8 +89,6 @@ class AcademicPlot(object):
         if ax is None:
             ax = self.ax
         ax.set_ylabel(ylabel, fontsize=self.fontsize)
-    
-    
 
     def scatter(self, x, y, label=None, marker=None, color=None, is_filled=True, markersize=None,ax=None):
         if ax is None:
@@ -158,11 +157,23 @@ class AcademicPlot(object):
         cbar = self.fig.colorbar(contour, ax=self.ax)
         cbar.set_label(colorbar_label)
         return contour
+    
+    def enable_scientific_notation(self, use_sci_notation=True, axis='both',ax=None):
+        if ax is None:
+            ax = self.ax
+
+        if axis in ['y', 'both']:
+            ax.ticklabel_format(style='sci', axis='y', scilimits=(-3, 4))
+            ax.yaxis.offsetText.set_fontsize(self.fontsize)  # 调整y轴科学记数法标签的字体大小
+
+        if axis in ['x', 'both']:
+            ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
+            ax.xaxis.offsetText.set_fontsize(self.fontsize)  # 调整x轴科学记数法标签的字体大小
 
     def show(self):
         plt.legend(frameon=False,fontsize=self.fontsize,loc='best')
         plt.tight_layout()
-        self.fig.set_size_inches(8, 6)  # 设置图形的尺寸为8x6英寸
+        self.fig.set_size_inches(self.figsize[0], self.figsize[1])
         plt.show()
         
     def savefig(self, filename):

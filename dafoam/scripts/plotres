@@ -33,8 +33,11 @@ with open(file_path, 'r') as file:
 
 # 使用 AcademicPlot 创建图表
 plot = AcademicPlot(figsize=(8,6))
-plot.set_labels(title="Objective Value Over Iterations", xlabel="Iteration", ylabel="Objective")
-plot.plot_line(list(range(1,len(objectives)+1)), objectives,markevery=1e5)  # 绘制目标值
+plot.plot(list(range(1,len(objectives)+1)), objectives)  # 绘制目标值
+plot.set_title("Loss Over Iterations")
+plot.set_xlabel("Iteration")
+plot.set_ylabel("Loss")
+plot.enable_scientific_notation(axis='both')
 
 # 显示并保存图表
 plot.show()

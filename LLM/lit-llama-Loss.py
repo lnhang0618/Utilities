@@ -1,6 +1,14 @@
 import numpy as np
 from myplotstyle import AcademicPlot
 import re
+import sys
+
+# 检查是否有命令行参数传入
+if len(sys.argv) > 1:
+    file_path = sys.argv[1]  # 使用命令行指定的文件
+else:
+    file_path = './log.txt'  # 如果没有指定文件，则在当前目录查找opt_IPOPT.txt
+
 
 def parse_log(file_path):
     iter_nums = []
@@ -21,12 +29,15 @@ def parse_log(file_path):
 
     return iter_nums, losses
 
-log_file = '/data/Data/LeonRho/llm_scripts/lit-llama/lnhang_scripts/log.txt'
-iter_nums, losses = parse_log(log_file)
+if __name__ == "__main__":
+    iter_nums, losses = parse_log(file_path)
 
-plot = AcademicPlot(figsize=(8,6))
-plot.plot(iter_nums, losses)
-plot.set_title("Loss Over Iterations")
-plot.set_xlabel("Iteration")
-plot.set_ylabel("Loss")
-plot.savefig('loss.png')
+    plot = AcademicPlot(figsize=(8,6))
+    plot.plot(iter_nums, losses)
+    plot.set_title("Loss Over Iterations")
+    plot.set_xlabel("Iteration")
+    plot.set_ylabel("Loss")
+    plot.enable_scientific_notation(axis='both')
+
+    plot.show()
+    plot.savefig('loss.png')

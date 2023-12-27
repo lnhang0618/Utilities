@@ -87,9 +87,9 @@ def plot_data(academic_plot, data, label, marker=None, plot_type='line',markever
     
     # 绘图
     if plot_type == 'line':
-        academic_plot.plot_line(x, y, **plot_args)
+        academic_plot.plot(x, y, **plot_args)
     elif plot_type == 'scatter':
-        academic_plot.plot_scatter(x, y, label=label, marker=marker)
+        academic_plot.scatter(x, y, label=label, marker=marker)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
