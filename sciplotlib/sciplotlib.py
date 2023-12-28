@@ -11,13 +11,13 @@ plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['text.usetex'] = True
 
 class AcademicPlot(object):
-    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 17,theme='bright',show_minor_ticks=True):
+    def __init__(self, ax=None, nrows=1, ncols=1,figsize=(8, 6), tick_count=5,fontsize = 17,theme='muted',show_minor_ticks=True):
         if ax is not None:
             self.fig = ax.figure
             self.ax = ax
         else:
             # 根据nrows和ncols创建子图
-            self.fig, self.axs = plt.subplots(nrows, ncols, figsize=figsize)
+            self.fig, self.axs = plt.subplots(nrows, ncols, figsize=figsize,constrained_layout=True)
 
             # 如果只有一个子图，则将self.axs设置为单个轴对象
             if nrows == 1 and ncols == 1:
@@ -82,6 +82,18 @@ class AcademicPlot(object):
     ## 
     ##        functions
     ##
+                
+    def enable_scientific_notation(self,axis='both',ax=None):
+        if ax is None:
+            ax = self.ax
+
+        if axis in ['y', 'both']:
+            ax.ticklabel_format(style='sci', axis='y', scilimits=(-3, 4))
+            ax.yaxis.offsetText.set_fontsize(self.fontsize)  # 调整y轴科学记数法标签的字体大小
+
+        if axis in ['x', 'both']:
+            ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
+            ax.xaxis.offsetText.set_fontsize(self.fontsize)  # 调整x轴科学记数法标签的字体大小
 
     def set_title(self, title,ax=None):
         if ax is None:
@@ -166,28 +178,17 @@ class AcademicPlot(object):
         cbar.set_label(colorbar_label)
         return contour
 
-    
-    def enable_scientific_notation(self, use_sci_notation=True, axis='both',ax=None):
+    def legend(self, ax=None, **kwargs):
         if ax is None:
             ax = self.ax
+        ax.legend(fontsize=self.fontsize, **kwargs,frameon=False)
 
-        if axis in ['y', 'both']:
-            ax.ticklabel_format(style='sci', axis='y', scilimits=(-3, 4))
-            ax.yaxis.offsetText.set_fontsize(self.fontsize)  # 调整y轴科学记数法标签的字体大小
-
-        if axis in ['x', 'both']:
-            ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
-            ax.xaxis.offsetText.set_fontsize(self.fontsize)  # 调整x轴科学记数法标签的字体大小
 
     def show(self):
-        plt.legend(frameon=False,fontsize=self.fontsize,loc='best')
-        plt.tight_layout()
         self.fig.set_size_inches(self.figsize[0], self.figsize[1])
         plt.show()
         
     def savefig(self, filename):
-        plt.legend(frameon=False,fontsize=self.fontsize,loc='best')
-        plt.tight_layout()
         self.fig.set_size_inches(self.figsize[0], self.figsize[1])
         plt.savefig(filename, bbox_inches='tight')
         plt.close()

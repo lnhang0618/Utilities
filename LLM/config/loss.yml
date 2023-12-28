@@ -9,7 +9,9 @@ log_files:
     label: random-kl0.4-200
 plot_setting:
     x_lim: [0, 8000]
-    y_lim: [2, 8]
+    y_lim: [2, 9]
 
+inset:
+    zoom: 2
 sampling_rate: 1.0
 window_size: 20
