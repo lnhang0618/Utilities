@@ -119,5 +119,8 @@ if __name__ == "__main__":
     plot.show()
 
     # 保存图片到一个固定的文件名
-    plot.savefig('./assets/combined_loss.png')
+    if 'savefig' in config:
+        plot.savefig(config['savefig'])
+    else:
+        plot.savefig('./assets/combined_loss.png')
 

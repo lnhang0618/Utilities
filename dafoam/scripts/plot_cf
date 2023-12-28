@@ -4,6 +4,7 @@ import pandas as pd
 import yaml
 import sys
 from myplotstyle import AcademicPlot
+import os
 
 def show_yaml_example():
     print("YAML配置文件示例:")
@@ -144,4 +145,11 @@ if __name__ == "__main__":
         my_plot.ax.set_ylim(ylim[0], ylim[1])
 
     my_plot.show()
-    my_plot.save("cf.png")
+    
+    if not os.path.exists("./assets"):
+        os.makedirs("./assets")
+
+    if 'savefig' in config:
+        my_plot.save(config['savefig'])
+    else:
+        my_plot.save("./assets/cf.png")
