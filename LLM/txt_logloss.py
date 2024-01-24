@@ -47,9 +47,13 @@ def parse_log(file_path, sampling_rate=1, window_size=5):
         for line in file:
             if counter % sampling_rate == 0:
                 match = re.search(r'iter (\d+): loss (\d+\.\d+)', line)
+                penalty_match = re.search(r'kl_penalty: (\d+\.\d+)', line)
                 if match:
                     iter_num = int(match.group(1))
                     loss = float(match.group(2))
+                    if penalty_match and penalty_match.group(1)!=-1.0:
+                        loss -= float(penalty_match.group(1))
+                           
                     iter_nums.append(iter_num)
                     raw_losses.append(loss)
                     
@@ -84,28 +88,35 @@ if __name__ == "__main__":
 
     plot = AcademicPlot(figsize=(8, 6))
 
-    # 在循环开始之前创建放大区域
-    axins = zoomed_inset_axes(plot.ax, zoom=config['inset'].get('zoom',2), loc=config['inset'].get('loc',1))
-    for file_config in log_files:
-        file_path = file_config['path']
-        label = file_config['label']
-        iter_nums, losses = parse_log(file_path, sampling_rate=sampling_rate, window_size=window_size)
-        
-        # 在主轴上绘制每条线
-        plot.plot(iter_nums, losses, label=label)
-        
-        # 在放大区域绘制每条线
-        axins.plot(iter_nums, losses)
+    if 'inset' in config:
+        # 在循环开始之前创建放大区域
+        axins = zoomed_inset_axes(plot.ax, zoom=config['inset'].get('zoom',2), loc=config['inset'].get('loc',1))
+        for file_config in log_files:
+            file_path = file_config['path']
+            label = file_config['label']
+            iter_nums, losses = parse_log(file_path, sampling_rate=sampling_rate, window_size=window_size)
+            
+            # 在主轴上绘制每条线
+            plot.plot(iter_nums, losses, label=label)
+            
+            # 在放大区域绘制每条线
+            axins.plot(iter_nums, losses)
 
-    # 设置放大区域的坐标轴范围
-    x1, x2, y1, y2 = config['inset'].get('x1',500), config['inset'].get('x2',2500), config['inset'].get('y1',2.5), config['inset'].get('y2',4)
-    axins.set_xlim(x1, x2)
-    axins.set_ylim(y1, y2)
-    axins.yaxis.set_visible(False)
-    axins.xaxis.set_visible(False)
+        # 设置放大区域的坐标轴范围
+        x1, x2, y1, y2 = config['inset'].get('x1',500), config['inset'].get('x2',2500), config['inset'].get('y1',2.5), config['inset'].get('y2',4)
+        axins.set_xlim(x1, x2)
+        axins.set_ylim(y1, y2)
+        axins.yaxis.set_visible(False)
+        axins.xaxis.set_visible(False)
 
-    # 在主轴上标记放大区域
-    mark_inset(plot.ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
+        # 在主轴上标记放大区域
+        mark_inset(plot.ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
+    else:
+        for file_config in log_files:
+            file_path = file_config['path']
+            label = file_config['label']
+            iter_nums, losses = parse_log(file_path, sampling_rate=sampling_rate, window_size=window_size)
+            plot.plot(iter_nums, losses, label=label)
 
     # 显示图例
 
@@ -114,7 +125,11 @@ if __name__ == "__main__":
     if plot_setting.get('y_lim',None) is not None:
         plot.ax.set_ylim(plot_setting['y_lim'][0],plot_setting['y_lim'][1])
     
-    plot.legend(ax=plot.ax,loc='upper left')
+    plot.legend(ax=plot.ax,loc='upper right')
+    plot.set_xlabel('Iteration')
+    plot.set_ylabel('Loss')
+    plot.set_title('Loss over Iteration')
+    plot.enable_scientific_notation()
 
     plot.show()
 

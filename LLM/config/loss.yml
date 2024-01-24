@@ -1,17 +1,21 @@
-log_files:
-  - path: /data/Data/LeonRho/logfile/lr-nokl.txt
-    label: lr-nokl
-  - path: /data/Data/LeonRho/logfile/random-kl-nofreeze.txt
-    label: random-kl-nofreeze
-  - path: /data/Data/LeonRho/logfile/random-nokl-nofreeze.txt
-    label: random-nokl-nofreeze
-  - path: /data/Data/LeonRho/logfile/random-kl0.4-200.txt
-    label: random-kl0.4-200
+log_files: 
+   - path: /data/Data/LeonRho/logfile/lr-linear-nores-1/lr-linear-nores-1.txt
+     label: lr-linear-nores-1
+   - path: /data/Data/LeonRho/logfile/lr-linear-nores-2/lr-linear-nores-2.txt
+     label: lr-linear-nores-2
+   - path: /data/Data/LeonRho/logfile/lr-linear-nores-3/lr-linear-nores-3.txt
+     label: lr-linear-nores-3
+   - path: /data/Data/LeonRho/logfile/random-nores-nosplit/random-nores-nosplit.txt
+     label: random-nores-nosplit
+   - path: /data/Data/LeonRho/logfile/lr-mlponly-1/lr-mlponly-1.txt
+     label: lr-mlponly-1
 plot_setting:
-    x_lim: [0, 8000]
-    y_lim: [2, 9]
+    x_lim: [0, 6000]
+    y_lim: [2, 6]
 
-inset:
-    zoom: 2
+# inset:
+#     zoom: 1.3
+#     loc: 10
+
 sampling_rate: 1.0
-window_size: 20
+window_size: 5
